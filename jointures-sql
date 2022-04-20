@@ -1,0 +1,213 @@
+-- Modifie la table wizard afin qu’elle corresponde exactement au schéma ci-dessous, et vide là également de tout contenu:
+
+ALTER TABLE wizard 
+DROP birthday;
+
+ALTER TABLE wizard 
+DROP birth_place;
+
+ALTER TABLE wizard 
+DROP biography;
+
+ALTER TABLE wizard 
+DROP is_muggle;
+
+-- Crée les tables player et team comme indiquées sur la modélisation ci-dessous (noms et types des champs), en prenant soin de déclarer correctement les clés étrangères:
+
+CREATE TABLE wild_db_quest.player ( 
+id INT PRIMARY KEY AUTO_INCREMENT, 
+wizard_id INT, 
+team_id INT, 
+role VARCHAR(50), 
+enrollment_date DATE; 
+
+CREATE TABLE wild_db_quest.team ( 
+id INT NOT NULL AUTO_INCREMENT, 
+name VARCHAR(80),
+PRIMARY KEY (id));
+
+-- Charge ensuite dans ta BDD ce fichier SQL et vérifie que tout s’est bien passé:
+
+SELECT * FROM wizard LIMIT 0,10;
+SELECT * FROM player LIMIT 0,10;
+SELECT * FROM team LIMIT 0,10;
+
++----+-----------+----------+
+| id | firstname | lastname |
++----+-----------+----------+
+|  1 | harry     | potter   |
+|  2 | hermione  | granger  |
+|  3 | lily      | potter   |
+|  4 | ron       | weasley  |
+|  5 | ginny     | weasley  |
+|  6 | fred      | weasley  |
+|  7 | george    | weasley  |
+|  8 | arthur    | weasley  |
+|  9 | molly     | weasley  |
+| 10 | drago     | malefoy  |
++----+-----------+----------+
+
++----+-----------+---------+--------+-----------------+
+| id | wizard_id | team_id | role   | enrollment_date |
++----+-----------+---------+--------+-----------------+
+|  1 |         1 |       4 | beater | 1995-10-09      |
+|  2 |         2 |       1 | chaser | 1995-08-17      |
+|  3 |         3 |       1 | seeker | 1994-12-03      |
+|  4 |         4 |       3 | chaser | 1995-03-24      |
+|  5 |         5 |       3 | keeper | 1997-07-16      |
+|  6 |         6 |       1 | beater | 1994-01-10      |
+|  7 |         7 |       4 | chaser | 1999-01-21      |
+|  8 |         8 |       4 | keeper | 1991-10-20      |
+| 10 |        10 |       1 | beater | 1991-08-03      |
+| 11 |        11 |       3 | beater | 1996-10-04      |
++----+-----------+---------+--------+-----------------+
+
++----+------------+
+| id | name       |
++----+------------+
+|  1 | Gryffindor |
+|  2 | Ravenclaw  |
+|  3 | Slytherin  |
+|  4 | Hufflepuff |
++----+------------+
+
+1.Retourne les noms, prénoms, rôle et équipe de tous les joueurs, classés dans l’ordre alphabétique par équipe, puis par rôle dans l’équipe, puis par nom de famille, puis par prénom.
+
+mysql> SELECT w.firstname, w.lastname, p.role, t.name 
+     -> FROM player AS p, wizard AS w, team AS t 
+     -> WHERE p.wizard_id = w.id AND p.team_id = t.id 
+     -> ORDER BY name, role, lastname, firstname;
+
+
++-------------+-----------------+--------+------------+
+| firstname   | lastname        | role   | name       |
++-------------+-----------------+--------+------------+
+| Sirius      | Black           | beater | Gryffindor |
+| Lavender    | Brown           | beater | Gryffindor |
+| Seamus      | Finnigan        | beater | Gryffindor |
+| Rubeus      | Hagrid          | beater | Gryffindor |
+| Alice       | Longbottom      | beater | Gryffindor |
+| Minerva     | McGonagall      | beater | Gryffindor |
+| Harry       | Potter          | beater | Gryffindor |
+| James       | Potter          | beater | Gryffindor |
+| Dean        | Thomas          | beater | Gryffindor |
+| Arthur      | Weasley         | beater | Gryffindor |
+| Percy       | Weasley         | beater | Gryffindor |
+| Katie       | Bell            | chaser | Gryffindor |
+| Albus       | Dumbledore      | chaser | Gryffindor |
+| Hermione    | Granger         | chaser | Gryffindor |
+| Lily        | J.              | chaser | Gryffindor |
+| Lee         | Jordan          | chaser | Gryffindor |
+| Augusta     | Longbottom      | chaser | Gryffindor |
+| Frank       | Longbottom      | chaser | Gryffindor |
+| Neville     | Longbottom      | chaser | Gryffindor |
+| Peter       | Pettigrew       | chaser | Gryffindor |
+| Alicia      | Spinnet         | chaser | Gryffindor |
+| George      | Weasley         | chaser | Gryffindor |
+| Oliver      | Wood            | chaser | Gryffindor |
+| Cadogan     |                 | keeper | Gryffindor |
+| Dennis      | Creevey         | keeper | Gryffindor |
+| Nicholas    | de              | keeper | Gryffindor |
+| Aberforth   | Dumbledore      | keeper | Gryffindor |
+| Angelina    | Johnson         | keeper | Gryffindor |
+| Ginevra     | Weasley         | keeper | Gryffindor |
+| Cuthbert    | Binns           | seeker | Gryffindor |
+| Colin       | Creevey         | seeker | Gryffindor |
+| Godric      | Gryffindor      | seeker | Gryffindor |
+| Romilda     | Vane            | seeker | Gryffindor |
+| Fred        | Weasley         | seeker | Gryffindor |
+| Ronald      | Weasley         | seeker | Gryffindor |
+| William     | Weasley         | seeker | Gryffindor |
+| Hannah      | Abbott          | beater | Hufflepuff |
+| Justin      | Finch-Fletchley | beater | Hufflepuff |
+| Fat         | Friar           | beater | Hufflepuff |
+| Hepzibah    | Smith           | beater | Hufflepuff |
+| Pomona      | Sprout          | beater | Hufflepuff |
+| Nymphadora  | Tonks           | beater | Hufflepuff |
+| Amelia      | Bones           | chaser | Hufflepuff |
+| Newton      | Scamander       | chaser | Hufflepuff |
+| Susan       | Bones           | keeper | Hufflepuff |
+| Cedric      | Diggory         | keeper | Hufflepuff |
+| Zacharias   | Smith           | keeper | Hufflepuff |
+| Helga       | Hufflepuff      | seeker | Hufflepuff |
+| Penelope    | Clearwater      | beater | Ravenclaw  |
+| Quirinus    | Quirrell        | beater | Ravenclaw  |
+| Helena      | Ravenclaw       | beater | Ravenclaw  |
+| Myrtle      | Warren          | beater | Ravenclaw  |
+| Cho         | Chang           | chaser | Ravenclaw  |
+| Marietta    | Edgecombe       | chaser | Ravenclaw  |
+| Filius      | Flitwick        | chaser | Ravenclaw  |
+| Anthony     | Goldstein       | chaser | Ravenclaw  |
+| Gilderoy    | Lockhart        | chaser | Ravenclaw  |
+| Luna        | Lovegood        | chaser | Ravenclaw  |
+| Xenophilius | Lovegood        | chaser | Ravenclaw  |
+| Garrick     | Ollivander      | chaser | Ravenclaw  |
+| Michael     | Corner          | seeker | Ravenclaw  |
+| Rowena      | Ravenclaw       | seeker | Ravenclaw  |
+| Sybill      | Trelawney       | seeker | Ravenclaw  |
+| Millicent   | Bulstrode       | beater | Slytherin  |
+| Vincent     | Crabbe          | beater | Slytherin  |
+| Marcus      | Flint           | beater | Slytherin  |
+| Pansy       | Parkinson       | beater | Slytherin  |
+| Severus     | Snape           | beater | Slytherin  |
+| Blaise      | Zabini          | beater | Slytherin  |
+| Bloody      | Baron           | chaser | Slytherin  |
+| Bellatrix   | Lestrange       | chaser | Slytherin  |
+| Rodolphus   | Lestrange       | chaser | Slytherin  |
+| Draco       | Malfoy          | chaser | Slytherin  |
+| Lucius      | Malfoy          | chaser | Slytherin  |
+| Phineas     | Nigellus        | chaser | Slytherin  |
+| Theodore    | Nott            | chaser | Slytherin  |
+| Tom         | Riddle          | chaser | Slytherin  |
+| Andromeda   | Tonks           | chaser | Slytherin  |
+| Regulus     | Black           | keeper | Slytherin  |
+| Gregory     | Goyle           | seeker | Slytherin  |
+| Rabastan    | Lestrange       | seeker | Slytherin  |
+| Narcissa    | Malfoy          | seeker | Slytherin  |
+| Salazar     | Slytherin       | seeker | Slytherin  |
+| Dolores     | Umbridge        | seeker | Slytherin  |
++-------------+-----------------+--------+------------+
+
+
+2.Retourne uniquement les prénoms et noms des joueurs ayant le rôle de seeker (attrapeur), classés par ordre alphabétique de nom puis prénom:
+
+mysql> SELECT w.firstname, w.lastname FROM wizard AS w JOIN player AS p ON p.wizard_id = w.id WHERE role = 'seeker';
++-----------+------------+
+| firstname | lastname   |
++-----------+------------+
+| Cuthbert  | Binns      |
+| Michael   | Corner     |
+| Colin     | Creevey    |
+| Gregory   | Goyle      |
+| Godric    | Gryffindor |
+| Helga     | Hufflepuff |
+| Rabastan  | Lestrange  |
+| Narcissa  | Malfoy     |
+| Rowena    | Ravenclaw  |
+| Salazar   | Slytherin  |
+| Sybill    | Trelawney  |
+| Dolores   | Umbridge   |
+| Romilda   | Vane       |
+| William   | Weasley    |
+| Fred      | Weasley    |
+| Ronald    | Weasley    |
++-----------+------------+
+
+3.Retourne la liste de tous les sorciers qui ne pratiquent pas le quidditch.
+
+mysql> SELECT w.firstname, w.lastname FROM wizard AS w LEFT JOIN player ON w.id = wizard_id WHERE wizard_id is NULL;
++-----------+----------+
+| firstname | lastname |
++-----------+----------+
+| Terry     | Boot     |
+| Crabbe    |          |
+| Remus     | Lupin    |
+| Padma     | Patil    |
+| Parvati   | Patil    |
+| Demelza   | Robins   |
+| Horace    | Slughorn |
+| Charles   | Weasley  |
+| Molly     | Weasley  |
++-----------+----------+
+
+
